@@ -16,7 +16,7 @@ const Gallery = () => {
     const {
         allPhotos,
         setAllPhotos,
-    }: any = useContext(PhotosContext);
+    } = useContext(PhotosContext);
 
     useEffect(() => {
         httpRequest('https://jsonplaceholder.typicode.com/photos').then((data) => {

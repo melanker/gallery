@@ -8,7 +8,13 @@ export interface IPhoto {
     thumbnailUrl: string
 }
 
-export const PhotosContext = createContext<{allPhotos: IPhoto[], setAllPhotos: (photos: IPhoto[]) => void}>({
+export interface IPhotoContext {
+    allPhotos: IPhoto[],
+    setAllPhotos: (photos: IPhoto[]) => void
+}
+
+
+export const PhotosContext = createContext<IPhotoContext>({
     allPhotos: [],
     setAllPhotos: (photos) => {},
 });
