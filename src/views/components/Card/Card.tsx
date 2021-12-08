@@ -1,5 +1,8 @@
 import React from 'react';
-import {Card as MuiCard, CardMedia} from '@mui/material'
+import {Card as MuiCard, CardActions, CardMedia, IconButton} from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {IPhoto} from '../../../context/PhotosContext';
 import * as styled from './Card.style.js';
 
@@ -14,6 +17,14 @@ const Card = ({id, albumId, title, url, thumbnailUrl}: IPhoto) => {
                        image={thumbnailUrl}
             >
             </CardMedia>
+            <CardActions>
+                <IconButton data-action="edit" data-id={id}>
+                    <EditIcon/>
+                </IconButton>
+                <IconButton data-action="delete" data-id={id}>
+                    <DeleteForeverIcon />
+                </IconButton>
+            </CardActions>
         </styled.Card>
     );
 };

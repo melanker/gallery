@@ -6,7 +6,7 @@ function App() {
     return (
         <PhotosProvider>
             <div className="App">
-                <Gallery/>
+                <Gallery />
             </div>
         </PhotosProvider>
     );
