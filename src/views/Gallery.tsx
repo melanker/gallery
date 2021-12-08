@@ -1,21 +1,32 @@
-import React, {DOMElement, useContext, useEffect, useState} from 'react';
+import React, {useRef, useContext, useEffect, useState} from 'react';
 import httpRequest from "../helpers/fetchHelper";
 import {IPhoto, PhotosContext} from "../context/PhotosContext";
 import {Grid} from '@mui/material';
 import Card from './components/Card/Card';
 import * as styled from "./Grid.style";
-import InfiniteScroll from "react-infinite-scroll-component";
+import {chunk} from 'lodash/';
+import {useVirtual} from "react-virtual";
 
-const BLOCK_SIZE = 42;
+const CHUNK_SIZE = 6
 
 const Gallery = () => {
-    const [hasMore, setHasMore] = useState(true);
-    const [blockNumber, setBlockNumber] = useState(0);
+    const parentRef = useRef<HTMLInputElement>(null);
 
     const {
         allPhotos,
         setAllPhotos,
     } = useContext(PhotosContext);
+
+
+    const rowsData = chunk(allPhotos, CHUNK_SIZE);
+
+    const rowVirtualizer = useVirtual({
+        size: Math.ceil(rowsData.length),
+        parentRef,
+        estimateSize: React.useCallback(() => 100, []),
+        overscan: 3
+    });
+
 
     useEffect(() => {
         httpRequest('https://jsonplaceholder.typicode.com/photos').then((data) => {
@@ -23,14 +34,6 @@ const Gallery = () => {
         });
     }, [])
 
-    const fetchNext = () => {
-        setBlockNumber(blockNumber + 1);
-        setHasMore((BLOCK_SIZE * (blockNumber + 1)) < allPhotos.length);
-    }
-
-    const getPhotosBlock = () => {
-        return [...allPhotos.slice(0, BLOCK_SIZE * (blockNumber + 1))]
-    }
 
     const handleClick = (event: React.MouseEvent<Node>) => {
         const element: Node | EventTarget = event.target;
@@ -39,7 +42,9 @@ const Gallery = () => {
         const action = (element as Node).parentElement?.dataset?.action ||
             (element as Node).parentElement?.parentElement?.dataset?.action
 
-        if (!id || !action) {return;}
+        if (!id || !action) {
+            return;
+        }
 
         const photoIndex = allPhotos.findIndex((photo: IPhoto) => photo.id === parseInt(id, 10))
 
@@ -51,24 +56,18 @@ const Gallery = () => {
     }
 
 
-
+    // @ts-ignore
     return (
-        <styled.Container onClick={handleClick}>
-            <InfiniteScroll
-                next={fetchNext}
-                hasMore={hasMore}
-                loader={<h4>Loading ...</h4>}
-                dataLength={blockNumber * BLOCK_SIZE}
-            >
-                <Grid container rowSpacing={2}>
-                    {getPhotosBlock().map((photo: IPhoto) => (
-                        <Grid key={`${photo.albumId}_${photo.id}`} item xs={2}>
-                            <Card {...photo} />
-                        </Grid>
-                    ))}
-                </Grid>
-
-            </InfiniteScroll>
+        <styled.Container onClick={handleClick} ref={parentRef as React.RefObject<HTMLDivElement>}>
+            <Grid container rowSpacing={2}>
+                {rowVirtualizer.virtualItems.map(virtualRow => (
+                    rowsData[virtualRow.index].map((photo: IPhoto) => (
+                            <Grid key={`${photo.albumId}_${photo.id}`} item xs={2}>
+                                <Card {...photo} />
+                            </Grid>
+                        )
+                    )))}
+            </Grid>
         </styled.Container>
     );
 };

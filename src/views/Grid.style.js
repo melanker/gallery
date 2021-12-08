@@ -5,4 +5,5 @@ export const Container = styled.div`
     padding: 10px;
     min-width: 1000px;
     overflow: auto;
+    height: 90vh;
 `
