@@ -1,4 +1,4 @@
-import React, {useRef, useContext, useEffect, useState} from 'react';
+import React, {useRef, useContext, useEffect} from 'react';
 import httpRequest from "../helpers/fetchHelper";
 import {IPhoto, PhotosContext} from "../context/PhotosContext";
 import {Grid} from '@mui/material';
@@ -35,12 +35,13 @@ const Gallery = () => {
     }, [])
 
 
-    const handleClick = (event: React.MouseEvent<Node>) => {
-        const element: Node | EventTarget = event.target;
-        const id = (element as Node).parentElement?.dataset?.id ||
-            (element as Node).parentElement?.parentElement?.dataset?.id
-        const action = (element as Node).parentElement?.dataset?.action ||
-            (element as Node).parentElement?.parentElement?.dataset?.action
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        const element: HTMLButtonElement | EventTarget = event.target;
+
+        const id = (element as HTMLButtonElement).parentElement?.dataset?.id ||
+            (element as HTMLButtonElement).parentElement?.parentElement?.dataset?.id
+        const action = (element as HTMLButtonElement).parentElement?.dataset?.action ||
+            (element as HTMLButtonElement).parentElement?.parentElement?.dataset?.action
 
         if (!id || !action) {
             return;
@@ -56,8 +57,8 @@ const Gallery = () => {
     }
 
 
-    // @ts-ignore
     return (
+        // @ts-ignore
         <styled.Container onClick={handleClick} ref={parentRef as React.RefObject<HTMLDivElement>}>
             <Grid container rowSpacing={2}>
                 {rowVirtualizer.virtualItems.map(virtualRow => (

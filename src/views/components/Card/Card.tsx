@@ -1,7 +1,6 @@
 import React from 'react';
-import {Card as MuiCard, CardActions, CardMedia, IconButton} from '@mui/material'
+import {CardActions, CardMedia, IconButton} from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {IPhoto} from '../../../context/PhotosContext';
 import * as styled from './Card.style.js';
